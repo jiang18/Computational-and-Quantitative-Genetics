@@ -2,9 +2,8 @@
 https://github.com/jiang18/Computational-and-Quantitative-Genetics/tree/main/module1
 
 ### 1. Download data and software
-https://download-directory.github.io/
-https://www.cog-genomics.org/plink/1.9/
-https://yanglab.westlake.edu.cn/software/gcta/
+https://www.cog-genomics.org/plink/1.9/  
+https://yanglab.westlake.edu.cn/software/gcta/  
 
 ### 2. Quality control of genotypes
 plink --bfile geno --maf 0.01 --hwe 1e-6 --make-bed --out geno.qc
