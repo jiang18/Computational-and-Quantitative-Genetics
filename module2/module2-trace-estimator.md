@@ -41,4 +41,11 @@ for(i in 1:5) {
     }
 }
 
+write.table(est_tr, file="trace_estimates.txt", quote=F, row.names=F, col.names=T)
+
+```
+
+```R
+est_tr = read.table("trace_estimates.txt", head=T)
+
 ```
