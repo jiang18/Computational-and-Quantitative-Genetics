@@ -46,6 +46,10 @@ write.table(est_tr, file="trace_estimates.txt", quote=F, row.names=F, col.names=
 ```
 
 ```R
+exact_tr = 2990.674
 est_tr = read.table("trace_estimates.txt", head=T)
+
+boxplot(est_tr, xlab="Number of random vectors")
+abline(h = exact_tr, col="blue")
 
 ```
