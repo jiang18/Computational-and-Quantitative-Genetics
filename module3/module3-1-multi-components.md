@@ -1,5 +1,5 @@
 ## Software tool
-PLINK
+PLINK  
 [MPH](https://jiang18.github.io/mph/)
 
 ## Data set
