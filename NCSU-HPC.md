@@ -3,7 +3,7 @@ https://hpc.ncsu.edu/Documents/LSF.php
 
 ## Example script for submitting LSF job
 
-```bash
+```sh
 #!/bin/bash
 #BSUB -n 20
 #BSUB -W 120
@@ -21,7 +21,7 @@ https://hpc.ncsu.edu/Documents/LSF.php
 
 ## Select a queue
 
-```bash
+```sh
 bsub -q standard < test.sh
 ```
 
