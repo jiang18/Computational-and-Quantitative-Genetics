@@ -1,3 +1,4 @@
+```R
 library(orthopolynom)
 poly = legendre.polynomials(n=3, normalized=F)
 
@@ -6,4 +7,5 @@ p = matrix(unlist(polynomial.values(poly, x)), nrow=length(x))
 
 # correlations are close to 0 because of orthogonality
 cor(p)
+```
 
