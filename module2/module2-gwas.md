@@ -43,11 +43,14 @@ plink --assoc --bfile geno.qc --allow-no-sex --pheno milk.residual.txt --pheno-n
 
 ## GRAMMAR-Gamma
 ```
+# slemm --lmm --phenotype_file phen.csv --bfile geno.qc --trait milk --snp_info_file snp.info.csv --out milk --num_threads 10
 OMP_NUM_THREADS=1 slemm_gamma.py --pfile geno.qc --slemm milk --out milk.gamma.txt
 ```
 
 ## SLEMM-GWA
 ```
+# slemm --lmm --phenotype_file phen.csv --bfile geno.qc --trait milk --snp_info_file snp.info.csv --out milk --num_threads 10
+
 export OMP_NUM_THREADS=10
 for i in `seq 1 5`; do slemm_gwa.py --pfile geno.qc --slemm milk --out milk.chr$i.txt --chr $i; done
 
