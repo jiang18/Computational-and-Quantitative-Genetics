@@ -35,20 +35,20 @@ print(lambda)
 ```
 
 ## GRAMMAR
-```
+```sh
 slemm --lmm --phenotype_file phen.csv --bfile geno.qc --trait milk --snp_info_file snp.info.csv --out milk --num_threads 10
 perl -e '$_=<>; print "FID $_"; while(<>){print "0 $_"}' < milk.reml.py.txt > milk.residual.txt
 plink --assoc --bfile geno.qc --allow-no-sex --pheno milk.residual.txt --pheno-name Py --out milk.residual
 ```
 
 ## GRAMMAR-Gamma
-```
+```sh
 # slemm --lmm --phenotype_file phen.csv --bfile geno.qc --trait milk --snp_info_file snp.info.csv --out milk --num_threads 10
 OMP_NUM_THREADS=1 slemm_gamma.py --pfile geno.qc --slemm milk --out milk.gamma.txt
 ```
 
 ## SLEMM-GWA
-```
+```sh
 # slemm --lmm --phenotype_file phen.csv --bfile geno.qc --trait milk --snp_info_file snp.info.csv --out milk --num_threads 10
 
 export OMP_NUM_THREADS=10
