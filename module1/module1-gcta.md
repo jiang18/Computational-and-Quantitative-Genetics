@@ -22,7 +22,7 @@ gcta64 --reml --grm genome --pheno phen.txt --mpheno 1 --out milk.em --threads 4
 gcta64 --mlma --bfile geno.qc --grm genome --pheno phen.txt --mpheno 1 --out milk --threads 4
 
 ### 7. LOCO
-gcta64 --mlma-loco --bfile geno.qc --grm genome --pheno phen.txt --mpheno 1 --out milk --threads 14
+gcta64 --mlma-loco --bfile geno.qc --pheno phen.txt --mpheno 1 --out milk --threads 14
 
 ### 8. Plot
 ```R
