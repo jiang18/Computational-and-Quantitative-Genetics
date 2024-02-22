@@ -1,0 +1,4 @@
+iter,num_traits,sample_size,num_GRMs,logLL,dLLpred,dogleg_Newton
+1,2,1894,3,615.274,47.0055,1
+2,2,1894,3,675.233,0.0847004,1
+3,2,1894,3,675.319,0.00163298,1

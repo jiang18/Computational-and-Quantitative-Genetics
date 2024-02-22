@@ -1,0 +1,37 @@
+## Single-trait RNM
+
+mtg2 -p tst.fam -d tst.dat -g tst.grm -rnm rnm.par -mrnm 1 -mod 1 -out rnm.out -bv rnm.bv -thread 20
+
+Rscript mtg2mph.R
+Rscript make_rnm_grms.R
+mph --reml --num_random 400 --grm_list mgrm.list --pheno example1-3-2.pheno.csv --trait 1 --num_threads 14 --out 1
+mph --pred --mq_file 1 --out 1
+
+### Compare BV estiamtes of MTG2 and MPH
+```R
+env = read.table("rnm.par")
+x = env[-c(1:2),1]
+
+rnm.bv = read.table("rnm.bv", skip=1)
+mq.bv = read.csv("1.mq.blup.csv")
+n = nrow(mq.bv)
+
+cor(rnm.bv[1:n,5], mq.bv[,3])
+cor(rnm.bv[(n+1):(2*n),5]*x, mq.bv[,5])
+
+par(mfrow=c(1,2))
+plot(rnm.bv[1:n,5], mq.bv[,3])
+abline(a=0,b=1)
+
+plot(rnm.bv[(n+1):(2*n),5]*x, mq.bv[,5])
+abline(a=0,b=1)
+
+```
+
+## Multi-trait RNM
+mph --simulate --grm_list mgrm.list --num_pheno 10 --out rnm
+/usr/bin/time -v mph --reml --num_random 400 --grm_list mgrm.list --pheno rnm.sim.csv --trait 1,2 --num_threads 14 --out rnm.1v2
+
+perl -e '$_=<>; while(<>){@c=split /,/; print join " ", @c[0,0..10]; print "\n"}' < rnm.sim.csv > rnm.sim.dat
+/usr/bin/time -v mtg2 -p tst.fam -d rnm.sim.dat -g tst.grm -mrnm 2 -rnm mrnm.par -mod 2 -thread 14 -bv mrnm.bv -out mrnm.out -cove 1
+
