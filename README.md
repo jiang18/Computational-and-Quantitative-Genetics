@@ -6,3 +6,6 @@
 
 ## Module 3. Multi-component linear mixed model
 
+## Module 4. Random regression and reaction norm models
+
+## Module 5. Bayesian hierarchical model
