@@ -14,10 +14,12 @@ summary(fit)
 require(invgamma)
 
 niter = 10000
+burnin = 1000
+step = 10
 mcmc = data.frame(b=rep(NA, niter), vare=rep(NA, niter))
 # initial values
-mcmc$b[1] = 100
-mcmc$vare[1] = 100
+mcmc$b[1] = 0.1
+mcmc$vare[1] = 0.1
 
 b_mean = sum(x*y) / sum(x*x)
 x_sumsq = sum(x*x)
@@ -35,3 +37,4 @@ points(1:niter, mcmc$b)
 plot(xlim=c(1,niter), ylim=c(min(mcmc$vare),max(mcmc$vare)), type = "n", x=0, y= 0, xlab="Iteration", ylab="Sample")
 points(1:niter, mcmc$vare)
 
+hist(mcmc$vare[seq(burnin, niter, step)])
