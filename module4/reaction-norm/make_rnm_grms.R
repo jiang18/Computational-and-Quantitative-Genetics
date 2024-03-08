@@ -10,7 +10,7 @@ source("../demo/mph_functs.R")
 G = read_grm("example1-3-2")
 
 for(i in 1:2) {
-    for(j in j:2) {
+    for(j in i:2) {
         if(i == 1 && j == 1) {
             next
         } else if (i == j) {
