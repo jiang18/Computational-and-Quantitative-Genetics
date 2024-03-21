@@ -1,16 +1,10 @@
 
-# Generate some example data
-n <- 100 # Number of individuals
-m <- 1000 # Number of SNPs
-Z <- matrix(rnorm(n * m), nrow = n) # SNP matrix (design matrix)
-mu = 1
-alpha_true <- rnorm(m) # True SNP effects
-y <- mu + Z %*% alpha_true + rnorm(n) # Phenotype data
+# PLINK raw genotype data
+geno = read.table("./wheat/wheat.raw",head=T)
+# Phenotype data
+phen = read.csv("./wheat/wheat.csv")
 
-# Chr 1 of QTL-MAS 2012 data
-phen = read.csv("phen.csv")
-y = phen$milk
-geno = read.table("chr1.raw",head=T)
+y = phen$T1
 Z = as.matrix(geno[,-(1:6)])
 n = nrow(Z)
 m = ncol(Z)
@@ -49,6 +43,8 @@ for (iter in 1:(n_iterations-1)) {
 
   # Update var_alpha given others
   var_alpha[iter+1] <- rinvgamma(1, shape = m / 2, rate = sum(alpha[,iter+1]^2) / 2)
+
+  print(paste("Completed MCMC iteration", iter))
 }
 
 # MCMC convergence diagnostics
@@ -57,6 +53,10 @@ library(coda)
 var_alpha = mcmc(var_alpha)
 summary(var_alpha)
 plot(var_alpha)
+
+var_e = mcmc(var_e)
+summary(var_e)
+plot(var_e)
 
 first_few_alpha = mcmc(t(alpha[1:3,]))
 summary(first_few_alpha)
