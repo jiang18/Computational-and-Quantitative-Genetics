@@ -58,7 +58,7 @@ var_alpha = mcmc(var_alpha)
 summary(var_alpha)
 plot(var_alpha)
 
-first_few_alpha = mcmc(alpha[,1:3])
+first_few_alpha = mcmc(t(alpha[1:3,]))
 summary(first_few_alpha)
 plot(first_few_alpha)
 
