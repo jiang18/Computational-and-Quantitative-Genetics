@@ -81,17 +81,24 @@ bayesRv2 -bfile mcmc-bayesr/wheat -n 1 -out T1.pred -predict -model T1.model -fr
 ```
 
 
-
 # Compute metrics
 ```R
 val = read.csv("validation.csv")
 
 trt = "T1"
+# SLEMM
 pred = read.csv(paste0(trt, ".gebv.csv"))
 colnames(pred)[1] = "ID"
-
 merged = merge(pred, val, by="ID")
-
 cor(merged$GEBV, merged[[trt]])
+
+# MCMC-BayesR
+pred = read.table(paste0(trt, ".pred.gv"))
+fam = read.table("mcmc-bayesr/wheat.fam")
+pred = cbind(fam[,2], pred)
+colnames(pred) = c("ID", "GEBV")
+merged = merge(pred, val, by="ID")
+cor(merged$GEBV, merged[[trt]])
+
 
 ```
