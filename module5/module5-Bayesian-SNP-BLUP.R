@@ -14,29 +14,23 @@ m = ncol(Z)
 freq = apply(geno[,-(1:6)], 2, mean)/2
 het = 2*(1-freq) * freq
 
-mcmc_samples = gibbs_blup(y, Z)    # The function of gibbs_blup is defined below.
-alpha = mcmc_samples$alpha
-var_alpha = mcmc_samples$var_alpha
-var_e = mcmc_samples$var_e
+blup = gibbs_blup(y, Z)    # The function of gibbs_blup is defined below.
 
 # MCMC convergence diagnostics
 library(coda)
-var_e = mcmc(var_e)
+var_e = mcmc(blup$var_e)
 summary(var_e)
 plot(var_e)
-first_few_alpha = mcmc(t(alpha[1:3,]))
+first_few_alpha = mcmc(t(blup$alpha[1:3,]))
 summary(first_few_alpha)
 plot(first_few_alpha)
 
-# Calculate SNP effects and variance components
-sample_idx = seq(burnin, n_iterations, thinning)
-est.alpha = apply(alpha[, sample_idx], 1, mean)
-est.var_e = mean(var_e[sample_idx])
-est.var_g = sum(het) * mean(var_alpha[sample_idx])  # genetic variance = sum(2pq) * var_alpha
-est.hsq = est.var_g / (est.var_g + est.var_e)
+# Calculate h2 estimate
+est.var_g = sum(het) * blup$estimate$var_alpha  # genetic variance = sum(2pq) * var_alpha
+est.hsq = est.var_g / (est.var_g + blup$estimate$var_e)
 
 # Calculate GEBVs
-gebv = as.matrix(geno[,-(1:6)]) %*% est.alpha
+gebv = as.matrix(geno[,-(1:6)]) %*% blup$estimate$alpha
 
 ##################################################################################
 # Gibbs sampling for the following model: y = u + Z alpha + e
@@ -45,7 +39,8 @@ gebv = as.matrix(geno[,-(1:6)]) %*% est.alpha
 #  burnin is the number of initial iterations to be disregarded.
 #  n_iterations is total number of iterations.
 #  thinning=10 means every 10-th sample is used for calculating mean values.
-# Output: MCMC samples for alpha, var_e, and var_alpha
+# Output: MCMC samples for alpha, var_e, var_alpha, and their estimates
+#  Return a list.
 ##################################################################################
 gibbs_blup <- function (y, Z, n_iterations=5000, burnin=1000, thinning=10) {
   # Load required libraries
@@ -82,7 +77,11 @@ gibbs_blup <- function (y, Z, n_iterations=5000, burnin=1000, thinning=10) {
   
     print(paste("Completed MCMC iteration", iter))
   }
+  sample_idx = seq(burnin, n_iterations, thinning)
+  est.alpha = apply(alpha[, sample_idx], 1, mean)
+  est.var_e = mean(var_e[sample_idx])
+  est.var_alpha = mean(var_alpha[sample_idx])
 
-  return(list(alpha=alpha, var_alpha=var_alpha, var_e=var_e))
+  return(list(alpha=alpha, var_alpha=var_alpha, var_e=var_e, estimate=list(alpha=est.alpha, var_e=est.var_e, var_alpha=est.var_alpha)))
 }
 
