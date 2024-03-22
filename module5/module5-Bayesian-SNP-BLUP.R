@@ -15,6 +15,9 @@ freq = apply(geno[,-(1:6)], 2, mean)/2
 het = 2*(1-freq) * freq
 
 mcmc_samples = gibbs_blup(y, Z)    # The function of gibbs_blup is defined below.
+alpha = mcmc_samples$alpha
+var_alpha = mcmc_samples$var_alpha
+var_e = mcmc_samples$var_e
 
 # MCMC convergence diagnostics
 library(coda)
