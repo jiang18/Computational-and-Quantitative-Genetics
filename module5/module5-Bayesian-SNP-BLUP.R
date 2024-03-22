@@ -7,8 +7,6 @@ phen = read.csv("./wheat/wheat.csv")
 y = phen$T1
 Z = as.matrix(geno[,-(1:6)])
 Z = scale(Z, scale=F)       # Center genotypes. Can help convergence. 
-n = nrow(Z)
-m = ncol(Z)
 
 # frequency and 2pq
 freq = apply(geno[,-(1:6)], 2, mean)/2
@@ -45,6 +43,9 @@ gebv = as.matrix(geno[,-(1:6)]) %*% blup$estimate$alpha
 gibbs_blup <- function (y, Z, n_iterations=5000, burnin=1000, thinning=10) {
   # Load required libraries
   require(invgamma)
+  
+  n = nrow(Z)
+  m = ncol(Z)
   
   # Initialize parameters
   alpha <- matrix(0, nrow=m, ncol=n_iterations) # Initialize SNP effects
