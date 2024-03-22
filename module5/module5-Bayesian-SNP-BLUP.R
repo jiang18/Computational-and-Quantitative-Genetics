@@ -39,8 +39,8 @@ gebv = as.matrix(geno[,-(1:6)]) %*% blup$estimate$alpha
 #  burnin is the number of initial iterations to be disregarded.
 #  n_iterations is total number of iterations.
 #  thinning=10 means every 10-th sample is used for calculating mean values.
-# Output: MCMC samples for alpha, var_e, var_alpha, and their estimates
-#  Return a list.
+# Output: MCMC samples and the estimates
+#  Return a list including alpha, var_e, var_alpha, and a nested list of their estimates
 ##################################################################################
 gibbs_blup <- function (y, Z, n_iterations=5000, burnin=1000, thinning=10) {
   # Load required libraries
