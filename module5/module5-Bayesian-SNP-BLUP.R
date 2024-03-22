@@ -6,14 +6,21 @@ phen = read.csv("./wheat/wheat.csv")
 
 y = phen$T1
 Z = as.matrix(geno[,-(1:6)])
+Z = scale(Z, scale=F)       # # Center genotypes. Can help convergence. 
 n = nrow(Z)
 m = ncol(Z)
+
+# frequency and 2pq
+freq = apply(geno[,-(1:6)], 2, mean)/2
+het = 2*(1-freq) * freq
 
 # Gibbs sampling
 # Load required libraries
 require(invgamma)
 
-n_iterations <- 1000
+burnin <- 1000       # number of initial iterations to be disregarded
+n_iterations <- 5000 # total number of iterations
+thinning <- 10       # use every 10-th sample when calculating mean values
 
 # Initialize parameters
 alpha <- matrix(0, nrow=m, ncol=n_iterations) # Initialize SNP effects
@@ -62,3 +69,12 @@ first_few_alpha = mcmc(t(alpha[1:3,]))
 summary(first_few_alpha)
 plot(first_few_alpha)
 
+# Calculate SNP effects and variance components
+sample_idx = seq(burnin, n_iterations, thinning)
+est.alpha = apply(alpha[, sample_idx], 1, mean)
+est.var_e = mean(var_e[sample_idx])
+est.var_g = sum(het) * mean(var_alpha[sample_idx])  # genetic variance = sum(2pq) * var_alpha
+est.hsq = est.var_g / (est.var_g + est.var_e)
+
+# Calculate GEBVs
+gebv = as.matrix(geno[,-(1:6)]) %*% est.alpha
