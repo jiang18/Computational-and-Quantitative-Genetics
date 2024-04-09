@@ -1,6 +1,6 @@
 ### Download the GigaScience pig data to ~/giga_pig/
 ```sh
-plink --bfile ~/giga_pig/3000_gwas_ok --from-mb 20 --to-mb 25 --chr 1 --maf 0.01 --make-bed --out chr1-20-25
+plink --bfile ./giga_pig/3000_gwas_ok --from-mb 20 --to-mb 25 --chr 1 --maf 0.01 --make-bed --out chr1-20-25
 
 plink --bfile chr1-20-25 --fill-missing-a2 --make-bed --out filled
 
