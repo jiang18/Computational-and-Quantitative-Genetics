@@ -1,4 +1,4 @@
-### Download the GigaScience pig data to ~/giga_pig/
+### Download the GigaScience pig data
 ```sh
 plink --bfile ./giga_pig/3000_gwas_ok --from-mb 20 --to-mb 25 --chr 1 --maf 0.01 --make-bed --out chr1-20-25
 
@@ -35,14 +35,14 @@ ReadGRMBin=function(prefix, AllN=F, size=4){
 }
 
 # read GRM
-bin = ReadGRMBin( "~/giga_pig/pig_grm" )
+bin = ReadGRMBin( "./giga_pig/pig_grm" )
 np = length(bin$diag)
 G = matrix(0, nrow=np, ncol=np)
 G[upper.tri(G)] = bin$off
 G = G + t(G)
  
 # simulate phenotypes with h2=0.5
-raw = read.table("~/finemap/add.raw",head=T)
+raw = read.table("./add.raw",head=T)
 raw = raw[,-(1:6)]
 diag(G) = bin$diag + 1
  
@@ -51,28 +51,31 @@ pheno = pheno + raw[,447] * 0.3 + raw[,464] * 0.3
  
 dat = cbind(bin$id, pheno)
 colnames(dat) = c("IID","FID","QT")
-write.table(dat, file="~/finemap/gcta.pheno.txt", row.names=F, col.names=F, quote=F)
-write.csv(dat, file="~/finemap/bfmap.pheno.csv", row.names=F, quote=F)
+write.table(dat, file="./gcta.pheno.txt", row.names=F, col.names=F, quote=F)
+write.csv(dat, file="./bfmap.pheno.csv", row.names=F, quote=F)
 
 ```
 
 ### BFMAP analysis
 ```
-./bfmap --compute_grm 1 --binary_genotype ~/giga_pig/3000_gwas_ok --snp_info gwas_ok.snp_info.csv --output bfmap_grm --num_threads 10
+perl -e 'print "SNP\n"; while(<>){@c=split /\s+/; print "$c[1]\n";}' < ./giga_pig/3000_gwas_ok.bim > gwas_ok.snp_info.csv
+bfmap --compute_grm 1 --binary_genotype ./giga_pig/3000_gwas_ok --snp_info gwas_ok.snp_info.csv --output bfmap_grm --num_threads 10
 
-./bfmap --varcomp --phenotype bfmap.pheno.csv --trait QT --binary_grm bfmap_grm --output hsq --num_threads 10
+bfmap --varcomp --phenotype bfmap.pheno.csv --trait QT --binary_grm bfmap_grm --output hsq --num_threads 10
 
-./bfmap --phenotype bfmap.pheno.csv --trait QT --snp_info chr1-20-25.snp_info.csv --binary_genotype ~/giga_pig/3000_gwas_ok --output test --num_threads 10 --binary_grm bfmap_grm --heritability 0.51
+perl -e 'print "SNP\n"; while(<>){@c=split /\s+/; print "$c[1]\n";}' < filled.bim > chr1-20-25.snp_info.csv
+bfmap --phenotype bfmap.pheno.csv --trait QT --snp_info chr1-20-25.snp_info.csv --binary_genotype filled --output test --num_threads 10 --binary_grm bfmap_grm --heritability 0.51
+
 ```
 
 ### GCTA LMM analysis
 ```
-gcta64 --mlma --bfile filled --grm ~/giga_pig/pig_grm --pheno gcta.pheno.txt --out lmm --thread-num 10
+gcta64 --mlma --bfile filled --grm ./giga_pig/pig_grm --pheno gcta.pheno.txt --out lmm --thread-num 10
 ```
 
 ### R code for producing .ma file
 ```R
-assoc = read.table("~/finemap/lmm.mlma",head=T)
+assoc = read.table("./lmm.mlma",head=T)
 summary(assoc$p)
 write.table( cbind(assoc[,-c(1,3)], 2797), file="lmm.ma", row.names=F, quote=F)
 assoc[which(assoc$p == min(assoc$p)),]
