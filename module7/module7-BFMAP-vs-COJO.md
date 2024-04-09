@@ -64,7 +64,9 @@ bfmap --compute_grm 1 --binary_genotype ./giga_pig/3000_gwas_ok --snp_info gwas_
 bfmap --varcomp --phenotype bfmap.pheno.csv --trait QT --binary_grm bfmap_grm --output hsq --num_threads 10
 
 perl -e 'print "SNP\n"; while(<>){@c=split /\s+/; print "$c[1]\n";}' < filled.bim > chr1-20-25.snp_info.csv
-bfmap --phenotype bfmap.pheno.csv --trait QT --snp_info chr1-20-25.snp_info.csv --binary_genotype filled --output test --num_threads 10 --binary_grm bfmap_grm --heritability 0.51
+bfmap --phenotype bfmap.pheno.csv --trait QT --snp_info chr1-20-25.snp_info.csv --binary_genotype filled --output forward --num_threads 10 --binary_grm bfmap_grm --heritability 0.51
+
+bfmap --sss --phenotype bfmap.pheno.csv --trait QT --snp_info chr1-20-25.snp_info.csv --binary_genotype filled --output sss --num_threads 10 --binary_grm bfmap_grm --heritability 0.51
 
 ```
 
