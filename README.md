@@ -9,3 +9,7 @@
 ## Module 4. Random regression and reaction norm models
 
 ## Module 5. Bayesian hierarchical model
+
+## Module 7. Genetic fine-mapping
+
+## Module 8. Integration of functional annotations
