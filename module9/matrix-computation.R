@@ -22,6 +22,8 @@ multiply_row <- function(i) {
   A[i, ] %*% B
 }
 
+start_time <- Sys.time()
+
 # Create a cluster and export matrices to worker nodes
 cl <- makeCluster(4)  # Create a cluster with 4 cores
 clusterExport(cl, c("A", "B"))  # Export matrices to worker nodes
@@ -34,4 +36,14 @@ stopCluster(cl)
 
 # Convert the result to a matrix
 C <- do.call(rbind, result)
+
+end_time <- Sys.time()
+parallel_time <- end_time - start_time
+
+
+start_time <- Sys.time()
+C = A %*% B
+end_time <- Sys.time()
+serial_time <- end_time - start_time
+
 
