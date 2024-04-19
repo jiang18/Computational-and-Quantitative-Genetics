@@ -1,4 +1,6 @@
+########################################################################
 # 1. Avoid unnecessary computations
+########################################################################
 # Slow
 A <- matrix(1:9, nrow = 3)
 B <- t(A) %*% A
@@ -9,13 +11,15 @@ A <- matrix(1:9, nrow = 3)
 B <- crossprod(A)  # Equivalent to t(A) %*% A
 C <- solve(A, B)   # Solves A * C = B directly
 
-
+########################################################################
 # 2. Use parallel computation
+########################################################################
 library(parallel)
 
-# Create example matrices
-A <- matrix(rnorm(10000 * 10000), nrow = 10000)
-B <- matrix(rnorm(10000 * 10000), nrow = 10000)
+n = 10000
+
+A <- matrix(rnorm(n*n), n, n)
+B <- matrix(rnorm(n*n), n, n)
 
 # Define a function for matrix multiplication
 multiply_block <- function(block_indices) {
@@ -24,22 +28,35 @@ multiply_block <- function(block_indices) {
   A[start_row:end_row, ] %*% B
 }
 
+# File paths for matrices A and B
+file_A <- "A.rds"
+file_B <- "B.rds"
+
+# Save matrices A and B to RDS files in the current working directory
+saveRDS(A, file = file_A)
+saveRDS(B, file = file_B)
+
 # Parallel computation
 start_time <- Sys.time()
 
-# Create a cluster and export matrices to worker nodes
-cl <- makeCluster(8)  # Create a cluster with 8 cores
-clusterExport(cl, c("A", "B"))  # Export matrices to worker nodes
+# Set the number of cores
+n_cores <- 10
+
+# Create a cluster and export file paths to worker nodes
+cl <- makeCluster(n_cores)
+clusterExport(cl, c("file_A", "file_B"))
 
 # Define the block size and create block indices
-block_size <- 1000
-num_blocks <- ceiling(nrow(A) / block_size)
-block_indices <- matrix(c(seq(1, nrow(A), block_size),
-                          pmin(seq(block_size, nrow(A), block_size), nrow(A))),
-                        ncol = 2, byrow = TRUE)
+block_size <- round(n / n_cores)
+num_blocks <- ceiling(n / block_size)
+block_indices <- matrix(c(seq(1, nrow(A), block_size), pmin(seq(block_size, nrow(A), block_size), nrow(A))), ncol = 2, byrow = FALSE)
 
 # Perform parallel computation
-result <- parLapply(cl, split(block_indices, 1:nrow(block_indices)), multiply_block)
+result <- parLapplyLB(cl, split(block_indices, 1:nrow(block_indices)), function(idx) {
+  A <- readRDS(file_A)
+  B <- readRDS(file_B)
+  A[idx[1]:idx[2], ] %*% B
+})
 
 # Stop the cluster
 stopCluster(cl)
@@ -62,27 +79,17 @@ identical(C_parallel, C_serial)
 cat("Parallel time:", parallel_time, "\n")
 cat("Serial time:", serial_time, "\n")
 
+########################################################################
 # 3. Use RcppEigen
-library(SMUT)
+########################################################################
+library(Rcpp)
+library(RcppEigen)
 
-# Create example matrices
-A <- matrix(rnorm(10000 * 10000), nrow = 10000)
-B <- matrix(rnorm(10000 * 10000), nrow = 10000)
+n = 10000
 
-# Serial computation using RcppEigen
-start_time <- Sys.time()
-C_serial <- A %*% B
-end_time <- Sys.time()
-serial_time <- end_time - start_time
+A <- matrix(rnorm(n*n), n, n)
+B <- matrix(rnorm(n*n), n, n)
 
-# Parallel computation using RcppEigen
-start_time <- Sys.time()
-C_parallel <- eigenMapMatMult(A, B)
-end_time <- Sys.time()
-parallel_time <- end_time - start_time
-
-# Compare the results
-identical(C_parallel, C_serial)
-
-cat("Serial time (RcppEigen):", serial_time, "\n")
-cat("Parallel time (RcppEigen):", parallel_time, "\n")
+library(microbenchmark)
+sourceCpp("matmul.cpp")
+microbenchmark(A %*% B, matmult(A, B, n_cores=14), times=1)
