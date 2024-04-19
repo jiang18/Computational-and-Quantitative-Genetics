@@ -21,13 +21,6 @@ n = 10000
 A <- matrix(rnorm(n*n), n, n)
 B <- matrix(rnorm(n*n), n, n)
 
-# Define a function for matrix multiplication
-multiply_block <- function(block_indices) {
-  start_row <- block_indices[1]
-  end_row <- block_indices[2]
-  A[start_row:end_row, ] %*% B
-}
-
 # File paths for matrices A and B
 file_A <- "A.rds"
 file_B <- "B.rds"
