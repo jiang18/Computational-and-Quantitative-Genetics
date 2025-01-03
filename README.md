@@ -1,4 +1,4 @@
-# Computational and Quantitative Genetics
+# Computational Quantitative Genetics
 
 ## Module 1. Single-variate linear mixed model
 
